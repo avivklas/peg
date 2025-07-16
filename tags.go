@@ -40,9 +40,9 @@ func (c *configTags) bind(cf configField, path ...string) {
 
 		nextCf := configField{
 			val:          fieldVal,
-			name:         field.Tag.Get("_name"),
-			usage:        field.Tag.Get("_usage"),
-			defaultValue: field.Tag.Get("_default"),
+			name:         field.Tag.Get("peg.name"),
+			usage:        field.Tag.Get("peg.usage"),
+			defaultValue: field.Tag.Get("peg.default"),
 		}
 
 		if field.Type.Kind() == reflect.Struct {

@@ -9,24 +9,24 @@ import (
 )
 
 type config struct {
-	A a `_name:"a"`
+	A a `peg.name:"a"`
 }
 type a struct {
-	AA aa `_name:"aa"`
-	AB ab `_name:"ab"`
+	AA aa `peg.name:"aa"`
+	AB ab `peg.name:"ab"`
 }
 
 type aa struct {
-	AAA aaa `_name:"aaa"`
+	AAA aaa `peg.name:"aaa"`
 }
 
 type aaa struct {
-	AAAA string `_name:"aaaa" _default:"foo"`
+	AAAA string `peg.name:"aaaa" peg.default:"foo"`
 }
 
 type ab struct {
-	ABA string `_name:"aba"`
-	ABB string `_name:"abb"`
+	ABA string `peg.name:"aba"`
+	ABB string `peg.name:"abb"`
 }
 
 func Test_Read(t *testing.T) {
