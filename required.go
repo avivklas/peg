@@ -4,13 +4,14 @@ import (
 	_ "embed"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 type required struct {
 	checks []func() error
 }
 
-func (d *required) bind(field *configField, _ ...string) {
+func (d *required) bind(field *configField, path ...string) {
 	if field.required == "" {
 		return
 	}
@@ -23,7 +24,7 @@ func (d *required) bind(field *configField, _ ...string) {
 	d.checks = append(d.checks, func() (err error) {
 		fieldVal := field.val()
 		if fieldVal.IsZero() {
-			err = fmt.Errorf("%s is required", field.name)
+			err = fmt.Errorf("%s is required", strings.Join(append(path, field.name), "."))
 		}
 
 		return
