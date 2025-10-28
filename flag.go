@@ -16,6 +16,6 @@ func (f *flagReader) bind(field *configField, path ...string) {
 	})
 }
 
-func (f *flagReader) read() error {
+func (f *flagReader) apply() error {
 	return flag.CommandLine.Parse(os.Args[1:])
 }

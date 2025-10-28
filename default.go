@@ -19,4 +19,4 @@ func (d *defaults) bind(field *configField, _ ...string) {
 	}
 }
 
-func (d *defaults) read() error { return d.err }
+func (d *defaults) apply() error { return d.err }

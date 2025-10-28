@@ -31,7 +31,7 @@ func (d *required) bind(field *configField, path ...string) {
 	})
 }
 
-func (d *required) read() (err error) {
+func (d *required) apply() (err error) {
 	for _, check := range d.checks {
 		if err = check(); err != nil {
 			return

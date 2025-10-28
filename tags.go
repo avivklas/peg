@@ -37,6 +37,7 @@ func (c *configTags) bind(cf *configField, path ...string) {
 			usage:        field.Tag.Get("peg.usage"),
 			defaultValue: field.Tag.Get("peg.default"),
 			required:     field.Tag.Get("peg.required"),
+			parent:       cf,
 		}
 
 		if field.Type.Kind() == reflect.Struct {
@@ -52,7 +53,7 @@ func (c *configTags) bind(cf *configField, path ...string) {
 
 func (c *configTags) Read() (err error) {
 	for _, r := range *c {
-		if err = r.read(); err != nil {
+		if err = r.apply(); err != nil {
 			break
 		}
 	}

@@ -54,7 +54,7 @@ func (e *envReader) bind(field *configField, path ...string) {
 	})
 }
 
-func (e *envReader) read() (err error) {
+func (e *envReader) apply() (err error) {
 	for _, bind := range e.bindings {
 		if err = bind(); err != nil {
 			break
