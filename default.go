@@ -2,24 +2,21 @@ package peg
 
 import (
 	_ "embed"
-	"reflect"
 )
 
-type defaults struct{}
+type defaults struct {
+	err error
+}
 
-func (d *defaults) bind(field configField, _ ...string) {
+func (d *defaults) bind(field *configField, _ ...string) {
 	if field.defaultValue == "" {
 		return
 	}
 
-	var val reflect.Value
-	if v, ok := field.val.(reflect.Value); ok {
-		val = v
-	} else {
-		val = reflect.ValueOf(field.val)
+	err := assignValue(field.val(), field.defaultValue)
+	if d.err == nil {
+		d.err = err
 	}
-
-	assignValue(val, field.defaultValue)
 }
 
-func (d *defaults) read() {}
+func (d *defaults) read() error { return d.err }

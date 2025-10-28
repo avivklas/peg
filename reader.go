@@ -1,11 +1,13 @@
 package peg
 
-type reader interface {
-	bind(field configField, path ...string)
-	read()
+import "reflect"
+
+type source interface {
+	bind(field *configField, path ...string)
+	read() error
 }
 
 type configField struct {
-	val                       any
-	name, usage, defaultValue string
+	val                                 func() reflect.Value
+	name, usage, defaultValue, required string
 }

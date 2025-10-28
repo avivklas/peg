@@ -4,27 +4,19 @@ import (
 	"bufio"
 	_ "embed"
 	"os"
-	"reflect"
 	"strings"
 )
 
 type envReader struct {
-	bindings []func()
+	bindings []func() error
 }
 
-func (e *envReader) bind(field configField, path ...string) {
+func (e *envReader) bind(field *configField, path ...string) {
 	var name string
 	for _, s := range path {
 		name += strings.ToUpper(s) + "_"
 	}
 	name += strings.ToUpper(field.name)
-
-	var val reflect.Value
-	if v, ok := field.val.(reflect.Value); ok {
-		val = v
-	} else {
-		val = reflect.ValueOf(field.val)
-	}
 
 	f, err := os.Open(".env")
 	if err == nil {
@@ -45,23 +37,29 @@ func (e *envReader) bind(field configField, path ...string) {
 			}
 
 			v := strings.TrimSpace(parts[1])
-			e.bindings = append(e.bindings, func() {
-				assignValue(val, v)
+			e.bindings = append(e.bindings, func() error {
+				return assignValue(field.val(), v)
 			})
 
 			return
 		}
 	}
 
-	e.bindings = append(e.bindings, func() {
+	e.bindings = append(e.bindings, func() (err error) {
 		if v, ok := os.LookupEnv(name); ok {
-			assignValue(val, v)
+			err = assignValue(field.val(), v)
 		}
+
+		return
 	})
 }
 
-func (e *envReader) read() {
+func (e *envReader) read() (err error) {
 	for _, bind := range e.bindings {
-		bind()
+		if err = bind(); err != nil {
+			break
+		}
 	}
+
+	return
 }

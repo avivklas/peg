@@ -2,17 +2,10 @@ package peg
 
 import "reflect"
 
-type configTags []reader
+type configTags []source
 
-func (c *configTags) bind(cf configField, path ...string) {
-	var val reflect.Value
-
-	switch v := cf.val.(type) {
-	case reflect.Value:
-		val = v
-	default:
-		val = reflect.ValueOf(v)
-	}
+func (c *configTags) bind(cf *configField, path ...string) {
+	val := cf.val()
 
 	t := val.Type()
 
@@ -38,11 +31,12 @@ func (c *configTags) bind(cf configField, path ...string) {
 
 		fieldVal := val.Field(i)
 
-		nextCf := configField{
-			val:          fieldVal,
+		nextCf := &configField{
+			val:          func() reflect.Value { return fieldVal },
 			name:         field.Tag.Get("peg.name"),
 			usage:        field.Tag.Get("peg.usage"),
 			defaultValue: field.Tag.Get("peg.default"),
+			required:     field.Tag.Get("peg.required"),
 		}
 
 		if field.Type.Kind() == reflect.Struct {
@@ -56,8 +50,12 @@ func (c *configTags) bind(cf configField, path ...string) {
 	}
 }
 
-func (c *configTags) Read() {
+func (c *configTags) Read() (err error) {
 	for _, r := range *c {
-		r.read()
+		if err = r.read(); err != nil {
+			break
+		}
 	}
+
+	return
 }
