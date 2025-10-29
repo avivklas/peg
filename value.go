@@ -54,3 +54,44 @@ func assignValue(value reflect.Value, raw string) error {
 
 	return nil
 }
+
+func formatValue(value reflect.Value) string {
+	switch value.Kind() {
+	case reflect.String:
+		return value.Interface().(string)
+	case reflect.Invalid:
+	case reflect.Bool:
+		return strconv.FormatBool(value.Interface().(bool))
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return strconv.FormatInt(value.Int(), 10)
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		return strconv.FormatUint(value.Uint(), 10)
+	case reflect.Float32:
+	case reflect.Float64:
+	case reflect.Complex64:
+	case reflect.Complex128:
+	case reflect.Array:
+	case reflect.Chan:
+	case reflect.Func:
+	case reflect.Interface:
+	case reflect.Map:
+	case reflect.Pointer:
+	case reflect.Slice:
+		elm := value.Type().Elem()
+		switch elm.Kind() {
+		case reflect.String:
+			sb := &strings.Builder{}
+			for i := 0; i < len(value.Interface().([]string)); i++ {
+				if i > 0 {
+					sb.WriteString(",")
+				}
+				sb.WriteString(value.Interface().([]string)[i])
+			}
+			return sb.String()
+		}
+	case reflect.Struct:
+	case reflect.UnsafePointer:
+	}
+
+	return ""
+}
